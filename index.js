@@ -34,17 +34,17 @@ const createAsyncAction = (asyncType, request, after = identity) => (
 const initialAsyncState = { loading: false, data: null, error: '' };
 
 const createAsyncReducer = asyncType => ({
-  [toRequest(asyncType)]: state => ({ ...state, loading: true }),
-  [toSuccess(asyncType)]: (state, { payload }) => ({
-    ...state,
-    loading: false,
-    data: payload.result || payload,
-  }),
-  [toFail(asyncType)]: (state, { payload }) => ({
-    ...state,
-    loading: false,
-    error: payload,
-  }),
+  [toRequest(asyncType)]: state => Object.assign({}, state, { loading: true }),
+  [toSuccess(asyncType)]: (state, { payload }) =>
+    Object.assign({}, state, {
+      loading: false,
+      data: payload.result || payload,
+    }),
+  [toFail(asyncType)]: (state, { payload }) =>
+    Object.assign({}, state, {
+      loading: false,
+      error: payload,
+    }),
 });
 
 const createAsyncNormalizeSelector = (schema, selector) =>
