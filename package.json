@@ -1,7 +1,9 @@
 {
   "name": "redux-actions-async",
-  "version": "0.2.0",
-  "description": "",
+  "version": "0.2.1",
+  "description":
+    "A small library that facilitates the development of asynchronous actions in the redux ecosystem. Without copy-paste code and without headache.",
+  "keywords": ["redux", "normalizr", "async", "action", "reselect"],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
