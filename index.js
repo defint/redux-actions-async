@@ -1,10 +1,10 @@
-import { createAction } from 'redux-actions';
-import { denormalize } from 'normalizr';
-import { createSelector } from 'reselect';
+const createAction = require('redux-actions').createAction;
+const denormalize = require('normalizr').denormalize;
+const createSelector = require('reselect').createSelector;
 
-const toSuccess = asyncType => `${asyncType}_SUCCESS`;
-const toFail = asyncType => `${asyncType}_FAIL`;
-const toRequest = asyncType => `${asyncType}_REQUEST`;
+const toSuccess = asyncType => asyncType + '_SUCCESS';
+const toFail = asyncType => asyncType + '_FAIL';
+const toRequest = asyncType => asyncType + '_REQUEST';
 
 const identity = o => o;
 
@@ -58,12 +58,10 @@ const createAsyncNormalizeSelector = (schema, selector) =>
     return schema ? denormalize(data, schema, allList) : data;
   });
 
-module.exports = {
-  createAsyncAction,
-  initialAsyncState,
-  createAsyncReducer,
-  createAsyncNormalizeSelector,
-  toSuccess,
-  toFail,
-  toRequest,
-};
+exports.createAsyncAction = createAsyncAction;
+exports.initialAsyncState = initialAsyncState;
+exports.createAsyncReducer = createAsyncReducer;
+exports.createAsyncNormalizeSelector = createAsyncNormalizeSelector;
+exports.toSuccess = toSuccess;
+exports.toFail = toFail;
+exports.toRequest = toRequest;
