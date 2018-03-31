@@ -43,14 +43,9 @@ A small library that adds commas to numbers
 4) Create async reducer:
 
     ```
-    import { handleActions } from 'redux-actions';
-    import { createAsyncReducer, initialAsyncState } from 'redux-actions-async';
+    import { handleAsyncActions } from 'redux-actions-async';
     
-    export default handleActions(
-      createAsyncReducer(NASA_DATA_FETCH),
-      initialAsyncState
-    );
-    
+    export default handleAsyncActions(NASA_DATA_FETCH);
     ```
     
 5) Using in container:

@@ -1,4 +1,5 @@
 const createAction = require('redux-actions').createAction;
+const handleActions = require('redux-actions').handleActions;
 const denormalize = require('normalizr').denormalize;
 const createSelector = require('reselect').createSelector;
 
@@ -58,9 +59,15 @@ const createAsyncNormalizeSelector = (schema, selector) =>
     return schema ? denormalize(data, schema, allList) : data;
   });
 
+const handleAsyncActions = asyncType => handleActions(
+    createAsyncReducer(asyncType),
+    initialAsyncState
+);
+
 exports.createAsyncAction = createAsyncAction;
 exports.initialAsyncState = initialAsyncState;
 exports.createAsyncReducer = createAsyncReducer;
+exports.handleAsyncActions = handleAsyncActions;
 exports.createAsyncNormalizeSelector = createAsyncNormalizeSelector;
 exports.toSuccess = toSuccess;
 exports.toFail = toFail;
