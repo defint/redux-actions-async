@@ -14,13 +14,7 @@ A small library that facilitates the development of asynchronous actions in the 
 
 ## Basic usage
 
-1) Define action type:
-
-    ```
-    export const NASA_DATA_FETCH = 'NASA_DATA_FETCH';
-    ```
-
-2) Create function to make request:
+2) Create your async function, for example to make request with axios:
 
     ```
     import axios from 'axios';
@@ -37,8 +31,9 @@ A small library that facilitates the development of asynchronous actions in the 
     ```
     import { createAsyncAction } from 'redux-actions-async';
     
-    export const nasaFetchPlanet = createAsyncAction(NASA_DATA_FETCH, fetchPlanet);
+    export const NASA_DATA_FETCH = 'NASA_DATA_FETCH';
     
+    export const nasaFetchPlanet = createAsyncAction(NASA_DATA_FETCH, fetchPlanet);
     ```
     
 4) Create async reducer:
@@ -49,15 +44,26 @@ A small library that facilitates the development of asynchronous actions in the 
     export default handleAsyncActions(NASA_DATA_FETCH);
     ```
     
+5) Create selectors:
+
+    ```
+    import { createAsyncSelector, createLoadingSelector } from 'redux-actions-async';
+    
+    const _selector = state => state.nasa;
+    export const dataSelector = createAsyncSelector(_selector);
+    export const loadingSelector = createLoadingSelector(_selector);
+    ``` 
+
 5) Using in container:
 
     ```
     import { connect } from 'react-redux';
     import * as actionCreators from '../actionCreators';
+    import * as selectors from '../selectors';
     
     const mapStateToProps = state => ({
-      loading: state.nasa.loading,
-      planet: state.nasa.data,
+      loading: selectors.loadingSelector(state),
+      planet: selectors.dataSelector(state),
     });
     
     const mapDispatchToProps = {
@@ -70,27 +76,23 @@ A small library that facilitates the development of asynchronous actions in the 
 
 ## Basic usage with nested reducers
 
-```
-import { handleAsyncActions } from 'redux-actions-async';
-import { combineReducers } from 'redux';
-
-export default combineReducers({
-  main: handleAsyncActions(NASA_DATA_FETCH),
-  another: handleAsyncActions(NASA_ANOTHER_DATA_FETCH),
-});
-
-```
-
-## Basic usage with normalizr
-
-
-1) Define action type:
+1) 
 
     ```
-    export const NASA_CURIOSITY_FETCH = 'NASA_CURIOSITY_FETCH';
+    import { handleAsyncActions } from 'redux-actions-async';
+    import { combineReducers } from 'redux';
+    
+    export default combineReducers({
+      main: handleAsyncActions(NASA_DATA_FETCH),
+      another: handleAsyncActions(NASA_ANOTHER_DATA_FETCH),
+    });
+    
     ```
 
-2) Create function to make request:
+## Usage with normalizr
+
+
+2) Create function to make request (same as basic usage):
 
     ```
     import axios from 'axios';
@@ -119,6 +121,8 @@ export default combineReducers({
     import { createAsyncAction } from 'redux-actions-async';
     import photo from '../schemas/photo';
     
+    export const NASA_CURIOSITY_FETCH = 'NASA_CURIOSITY_FETCH';
+    
     export const nasaFetchCuriosity = createAsyncAction(
       NASA_CURIOSITY_FETCH,
       fetchCuriosityPhotos,
@@ -126,34 +130,39 @@ export default combineReducers({
     );    
     ```
     
-4) Create async reducer:
+4) Create async reducer (same as basic usage):
 
     ```
     import { handleAsyncActions } from 'redux-actions-async';
     
     export default handleAsyncActions(NASA_CURIOSITY_FETCH);
     ```
+   
+5)  Create selectors:
+    
+    ```
+    import { createAsyncSelector, createLoadingSelector } from 'redux-actions-async';
+    import photo from '../schemas/photo';
+    
+    const _selector = state => state.nasaCuriosity;
+    export const dataSelector = createAsyncSelector(_selector, [photo]);
+    export const loadingSelector = createLoadingSelector(_selector);
+    ``` 
     
 5) Using in container:
 
     ```
     import { connect } from 'react-redux';
     import * as actionCreators from '../actionCreators';
-    import photo from '../schemas/photo';
-    
-    const getCuriosityPhotos = createAsyncNormalizeSelector(
-      [photo],
-      state => state.curiosity
-    );
+    import * as selectors from '../selectors';
     
     const mapStateToProps = state => ({
-      loading: state.curiosity.loading,
-      curiosity: getCuriosityPhotos(state),
+      loading: selectors.loadingSelector(state),
+      curiosity: selectors.dataSelector(state),
     });
     
     const mapDispatchToProps = {
       nasaFetchCuriosity: actionCreators.nasaFetchCuriosity,
-      changeStore: actionCreators.changeStore,
     };
     
     export default connect(mapStateToProps, mapDispatchToProps)(App);

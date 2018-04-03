@@ -1,6 +1,6 @@
 {
   "name": "redux-actions-async",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description":
     "A small library that facilitates the development of asynchronous actions in the redux ecosystem. Without copy-paste code and without headache.",
   "keywords": ["redux", "normalizr", "async", "action", "reselect"],

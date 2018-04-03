@@ -7,6 +7,8 @@ const toSuccess = asyncType => asyncType + '_SUCCESS';
 const toFail = asyncType => asyncType + '_FAIL';
 const toRequest = asyncType => asyncType + '_REQUEST';
 
+const globalErrorAction = createAction('ASYNC_ERROR_GLOBAL');
+
 const identity = o => o;
 
 const createAsyncAction = (asyncType, request, after = identity) => (
@@ -27,6 +29,7 @@ const createAsyncAction = (asyncType, request, after = identity) => (
       return payload;
     } catch (error) {
       dispatch(errorType(error));
+      dispatch(globalErrorAction(error));
       return error;
     }
   };
@@ -48,27 +51,43 @@ const createAsyncReducer = asyncType => ({
     }),
 });
 
-const createAsyncNormalizeSelector = (schema, selector) =>
-  createSelector([selector, state => state.entities], (listOrId, allList) => {
+const createAsyncSelector = (selector, schema) => {
+  if (schema) {
+    return createSelector(
+      [selector, state => state.entities],
+      (listOrId, allList) => {
+        const { data } = listOrId;
+
+        if (!data) {
+          return Array.isArray(schema) ? [] : {};
+        }
+
+        return schema ? denormalize(data, schema, allList) : data;
+      }
+    );
+  }
+
+  return createSelector([selector], listOrId => {
     const { data } = listOrId;
 
-    if (!data) {
-      return Array.isArray(schema) ? [] : {};
-    }
+    return data;
+  });
+};
 
-    return schema ? denormalize(data, schema, allList) : data;
+const handleAsyncActions = asyncType =>
+  handleActions(createAsyncReducer(asyncType), initialAsyncState);
+
+const createLoadingSelector = (...selectors) => state =>
+  selectors.some(selector => {
+    const { loading } = selector(state);
+    return loading;
   });
 
-const handleAsyncActions = asyncType => handleActions(
-    createAsyncReducer(asyncType),
-    initialAsyncState
-);
-
 exports.createAsyncAction = createAsyncAction;
-exports.initialAsyncState = initialAsyncState;
-exports.createAsyncReducer = createAsyncReducer;
 exports.handleAsyncActions = handleAsyncActions;
-exports.createAsyncNormalizeSelector = createAsyncNormalizeSelector;
+exports.createAsyncSelector = createAsyncSelector;
+exports.createLoadingSelector = createLoadingSelector;
 exports.toSuccess = toSuccess;
 exports.toFail = toFail;
 exports.toRequest = toRequest;
+exports.globalErrorAction = globalErrorAction;
