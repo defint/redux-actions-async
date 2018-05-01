@@ -11,28 +11,32 @@ const globalErrorAction = createAction('ASYNC_ERROR_GLOBAL');
 
 const identity = o => o;
 
-const createAsyncAction = (asyncType, request, after = identity) => (
-  ...args
-) => {
-  const pendingType = createAction(toRequest(asyncType));
-  const completeType = createAction(toSuccess(asyncType));
-  const errorType = createAction(toFail(asyncType));
+const createAsyncAction = (asyncType, request, after = identity) => {
+  const asyncAction = (...args) => {
+    const pendingType = createAction(toRequest(asyncType));
+    const completeType = createAction(toSuccess(asyncType));
+    const errorType = createAction(toFail(asyncType));
 
-  return async dispatch => {
-    dispatch(pendingType());
+    return async dispatch => {
+      dispatch(pendingType());
 
-    try {
-      const response = await request(...args);
-      const data = response.data || response;
-      const payload = data ? await after(data, dispatch) : null;
-      dispatch(completeType(payload));
-      return payload;
-    } catch (error) {
-      dispatch(errorType(error));
-      dispatch(globalErrorAction(error));
-      return error;
-    }
+      try {
+        const response = await request(...args);
+        const data = response.data || response;
+        const payload = data ? await after(data, dispatch) : null;
+        dispatch(completeType(payload));
+        return payload;
+      } catch (error) {
+        dispatch(errorType(error));
+        dispatch(globalErrorAction(error));
+        return error;
+      }
+    };
   };
+
+  asyncAction.__ACTION_TYPE = asyncType;
+
+  return asyncAction;
 };
 
 const initialAsyncState = { loading: false, data: null, error: '' };
@@ -74,8 +78,11 @@ const createAsyncSelector = (selector, schema) => {
   });
 };
 
-const handleAsyncActions = asyncType =>
-  handleActions(createAsyncReducer(asyncType), initialAsyncState);
+const handleAsyncActions = asyncAction =>
+  handleActions(
+    createAsyncReducer(asyncAction.__ACTION_TYPE),
+    initialAsyncState
+  );
 
 const createLoadingSelector = (...selectors) => state =>
   selectors.some(selector => {

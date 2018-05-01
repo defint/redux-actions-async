@@ -14,7 +14,7 @@ A small library that facilitates the development of asynchronous actions in the 
 
 ## Basic usage
 
-2) Create your async function, for example to make request with axios:
+1) Create your async function, for example to make request with axios:
 
     ```
     import axios from 'axios';
@@ -26,25 +26,23 @@ A small library that facilitates the development of asynchronous actions in the 
       });
     ``` 
     
-3) Create the first async action creator:
+2) Create the first async action creator:
 
     ```
     import { createAsyncAction } from 'redux-actions-async';
-    
-    export const NASA_DATA_FETCH = 'NASA_DATA_FETCH';
-    
-    export const nasaFetchPlanet = createAsyncAction(NASA_DATA_FETCH, fetchPlanet);
+        
+    export const nasaFetchPlanet = createAsyncAction('NASA_DATA_FETCH', fetchPlanet);
     ```
     
-4) Create async reducer:
+3) Create async reducer:
 
     ```
     import { handleAsyncActions } from 'redux-actions-async';
     
-    export default handleAsyncActions(NASA_DATA_FETCH);
+    export default handleAsyncActions(nasaFetchPlanet);
     ```
     
-5) Create selectors:
+4) Create selectors:
 
     ```
     import { createAsyncSelector, createLoadingSelector } from 'redux-actions-async';
@@ -75,24 +73,20 @@ A small library that facilitates the development of asynchronous actions in the 
     ```
 
 ## Basic usage with nested reducers
-
-1) 
-
-    ```
+```
     import { handleAsyncActions } from 'redux-actions-async';
     import { combineReducers } from 'redux';
     
     export default combineReducers({
-      main: handleAsyncActions(NASA_DATA_FETCH),
-      another: handleAsyncActions(NASA_ANOTHER_DATA_FETCH),
+      main: handleAsyncActions(nasaFetchPlanet),
+      another: handleAsyncActions(nasaFetchAnotherPlanet),
     });
-    
-    ```
+```
 
 ## Usage with normalizr
 
 
-2) Create function to make request (same as basic usage):
+1) Create function to make request (same as basic usage):
 
     ```
     import axios from 'axios';
@@ -104,7 +98,7 @@ A small library that facilitates the development of asynchronous actions in the 
       });
     ``` 
     
-3) Define schema:
+2) Define schema:
 
     ```
     import { schema } from 'normalizr';
@@ -120,11 +114,9 @@ A small library that facilitates the development of asynchronous actions in the 
     ```
     import { createAsyncAction } from 'redux-actions-async';
     import photo from '../schemas/photo';
-    
-    export const NASA_CURIOSITY_FETCH = 'NASA_CURIOSITY_FETCH';
-    
+        
     export const nasaFetchCuriosity = createAsyncAction(
-      NASA_CURIOSITY_FETCH,
+      'NASA_CURIOSITY_FETCH',
       fetchCuriosityPhotos,
       data => normalize(data.photos, [photo])
     );    
@@ -135,7 +127,7 @@ A small library that facilitates the development of asynchronous actions in the 
     ```
     import { handleAsyncActions } from 'redux-actions-async';
     
-    export default handleAsyncActions(NASA_CURIOSITY_FETCH);
+    export default handleAsyncActions(nasaFetchCuriosity);
     ```
    
 5)  Create selectors:
@@ -149,7 +141,7 @@ A small library that facilitates the development of asynchronous actions in the 
     export const loadingSelector = createLoadingSelector(_selector);
     ``` 
     
-5) Using in container:
+6) Using in container:
 
     ```
     import { connect } from 'react-redux';
