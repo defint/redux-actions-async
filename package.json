@@ -1,9 +1,14 @@
 {
   "name": "redux-actions-async",
-  "version": "0.3.1",
-  "description":
-    "A small library that facilitates the development of asynchronous actions in the redux ecosystem. Without copy-paste code and without headache.",
-  "keywords": ["redux", "normalizr", "async", "action", "reselect"],
+  "version": "0.3.2",
+  "description": "A small library that facilitates the development of asynchronous actions in the redux ecosystem. Without copy-paste code and without headache.",
+  "keywords": [
+    "redux",
+    "normalizr",
+    "async",
+    "action",
+    "reselect"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,7 +25,7 @@
   "homepage": "https://github.com/defint/redux-actions-async#readme",
   "dependencies": {
     "normalizr": "^3.2.4",
-    "redux-actions": "^2.3.0",
+    "redux-actions": "^2.4.0",
     "reselect": "^3.0.1"
   }
 }
